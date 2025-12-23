@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      containers:
+        - name: go-app
+          # 这里的 tag 暂时写 v1，后续我们将演示修改它
+          image: refrain96/go-gitops-demo:v1
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VERSION
+              value: "v1.0.0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: go-app
+  ports:
+    - port: 80
+      targetPort: 8080
