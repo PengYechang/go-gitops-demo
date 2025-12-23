@@ -27,7 +27,7 @@ kind: Service
 metadata:
   name: go-app-svc
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: go-app
   ports:

@@ -1,0 +1,65 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Go
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*~
+
+# Logs
+*.log
+
+# Env
+.env
+.env.*
+
+# Kubernetes
+*.kubeconfig
+
+# ArgoCD
+*.argocd
+
+# Misc
+coverage/
+dist/
+build/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Helm
+charts/
+release.yaml
+
+# Others
+*.bak
+*.tmp
+
