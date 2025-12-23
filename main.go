@@ -14,7 +14,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		message := fmt.Sprintf("Hello, Argo CD! Running Version: %s", version)
+		message := fmt.Sprintf("Hello, Argo CD! This is UPDATED VERSION: %s !!!", version)
 		fmt.Fprintf(w, message)
 		fmt.Println("Request received:", message)
 	})
