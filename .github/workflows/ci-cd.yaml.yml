@@ -7,6 +7,9 @@ on:
     paths-ignore:
       - 'k8s/**'
 
+permissions:
+  contents: write  # 允许修改代码仓库内容 (比如 git push)
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
