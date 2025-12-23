@@ -1,0 +1,58 @@
+name: CI/CD to ArgoCD
+
+on:
+  push:
+    branches: [ "main" ]
+    # 忽略 k8s 目录的变化，防止无限循环构建 (CI修改k8s -> 触发CI -> 修改k8s...)
+    paths-ignore:
+      - 'k8s/**'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 拉取代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. 登录 Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3. 设置短 Commit Hash 作为 tag (例如 a1b2c3d)
+      - name: Set Image Tag
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      # 4. 构建并推送镜像
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          # 即使是Mac用户，这里也会自动打出可以在 Linux K8s 跑的镜像
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/go-gitops-demo:${{ steps.vars.outputs.sha_short }}
+
+      # 5. 修改 K8s Manifest (这是 GitOps 的核心)
+      - name: Update Kubernetes Manifest
+        run: |
+          # 替换镜像 Tag
+          cd k8s
+          # 这里的 sed 命令会把你 YAML 里的 image: xxx/xxx:xxx 替换成新的
+          sed -i 's|image: .*|image: ${{ secrets.DOCKERHUB_USERNAME }}/go-gitops-demo:${{ steps.vars.outputs.sha_short }}|' deployment.yaml
+          
+          # 查看修改确认一下
+          cat deployment.yaml
+
+      # 6. 提交修改回 Git 仓库
+      - name: Commit and Push Manifest
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add k8s/deployment.yaml
+          git commit -m "Update image to version ${{ steps.vars.outputs.sha_short }}"
+          git push
