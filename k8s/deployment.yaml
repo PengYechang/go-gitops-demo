@@ -20,6 +20,8 @@ spec:
           env:
             - name: VERSION
               value: "v2.0.0"
+      imagePullSecrets:
+        - name: my-docker-secret
 ---
 apiVersion: v1
 kind: Service
