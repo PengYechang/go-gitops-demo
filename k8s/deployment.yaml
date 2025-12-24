@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: go-app
-          image: refrain96/go-gitops-demo:bf33724
+          image: refrain96/go-gitops-demo:37b9ad0
           ports:
             - containerPort: 8080
           env:
